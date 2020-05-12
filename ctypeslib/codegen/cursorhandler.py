@@ -528,7 +528,12 @@ class CursorHandler(ClangHandler):
                     value = self._clean_string_literal(token.cursor, value)
                 elif token.kind == TokenKind.IDENTIFIER:
                     # parse that, try to see if there is another Macro in there.
-                    value = self.get_registered(value).body
+                    try:
+                        value = self.get_registered(value).body
+                    except (KeyError, AttributeError):
+                        # KeyError: macro with arguments
+                        # AttributeError: macro with type conversion: (int)NUM
+                        pass
 
             # add token
             final_value.append(value)
